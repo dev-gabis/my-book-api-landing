@@ -16,6 +16,11 @@ const BookItem = styled.div`
   margin: 10px;
   width: 80%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f1f1f1;
+  }
 `;
 
 const BookTitle = styled.h3`
@@ -29,14 +34,14 @@ const BookAuthors = styled.p`
   color: #666;
 `;
 
-const BookList = ({ books, searched }) => {
+const BookList = ({ books, searched, onBookClick }) => {
   return (
     <BookListContainer>
       {searched && books.length === 0 ? (
         <p>Nenhum livro encontrado</p>
       ) : (
         books.map((book) => (
-          <BookItem key={book.id}>
+          <BookItem key={book.id} onClick={() => onBookClick(book)}>
             <BookTitle>{book.volumeInfo.title}</BookTitle>
             <BookAuthors>{book.volumeInfo.authors?.join(', ')}</BookAuthors>
           </BookItem>

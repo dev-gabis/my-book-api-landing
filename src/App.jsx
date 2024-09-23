@@ -4,6 +4,7 @@ import Header from './components/Header';
 import BookList from './components/BookList';
 import Footer from './components/Footer';
 import { GlobalStyle } from './styles/GlobalStyle';
+import BookDetailsPopup from './components/BookDetailsPopup';
 
 const SearchContainer = styled.div`
   display: flex;
@@ -26,18 +27,13 @@ const SearchButton = styled.button`
   border: 1px solid #ddd;
   border-left: none;
   border-radius: 0 5px 5px 0;
-  background-color: #007bff;
-  color: white;
+  background-color: #ffeb3b;
+  color: black;
   cursor: pointer;
   outline: none;
 
   &:hover {
-    background-color: #0056b3;
-  }
-
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+    background-color: #fdd835;
   }
 `;
 
@@ -62,13 +58,13 @@ const PaginationButton = styled.button`
   margin: 0 5px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  background-color: #007bff;
-  color: white;
+  background-color: #ffeb3b;
+  color: black;
   cursor: pointer;
   outline: none;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #fdd835;
   }
 
   &:disabled {
@@ -84,6 +80,7 @@ function App() {
   const [searched, setSearched] = useState(false);
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+  const [selectedBook, setSelectedBook] = useState(null);
 
   const suggestions = [
     'O Poder do Agora',
@@ -116,6 +113,14 @@ function App() {
     handleSearch(page - 1);
   };
 
+  const handleBookClick = (book) => {
+    setSelectedBook(book);
+  };
+
+  const handleClosePopup = () => {
+    setSelectedBook(null);
+  };
+
   return (
     <>
       <GlobalStyle />
@@ -137,7 +142,7 @@ function App() {
         </CategorySelect>
         <SearchButton onClick={() => handleSearch(0)}>Pesquisar</SearchButton>
       </SearchContainer>
-      <BookList books={books} searched={searched} />
+      <BookList books={books} searched={searched} onBookClick={handleBookClick} />
       {searched && (
         <PaginationContainer>
           <PaginationButton onClick={handlePreviousPage} disabled={page === 0}>
@@ -148,6 +153,7 @@ function App() {
           </PaginationButton>
         </PaginationContainer>
       )}
+      {selectedBook && <BookDetailsPopup book={selectedBook} onClose={handleClosePopup} />}
       <Footer />
     </>
   );
