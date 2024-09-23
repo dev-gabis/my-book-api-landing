@@ -11,6 +11,7 @@ const PopupContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: auto;
 `;
 
 const PopupContent = styled.div`
@@ -20,6 +21,8 @@ const PopupContent = styled.div`
   border-radius: 5px;
   width: 80%;
   max-width: 500px;
+  max-height: 90%;
+  overflow-y: auto;
   position: relative;
 `;
 
@@ -45,7 +48,18 @@ const RatingSelect = styled.select`
   color: ${(props) => props.theme.color};
 `;
 
-const BookDetailsPopup = ({ book, onClose }) => {
+const RemoveFavoriteButton = styled.button`
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.color};
+  cursor: pointer;
+`;
+
+const BookDetailsPopup = ({ book, onClose, removeFavorite, isFavorite }) => {
   const [rating, setRating] = useState(book.rating || '');
 
   const handleRatingChange = (e) => {
@@ -69,6 +83,11 @@ const BookDetailsPopup = ({ book, onClose }) => {
           <option value="2">2 estrelas</option>
           <option value="1">1 estrela</option>
         </RatingSelect>
+        {isFavorite && (
+          <RemoveFavoriteButton onClick={() => removeFavorite(book.id)}>
+            Remover dos Favoritos
+          </RemoveFavoriteButton>
+        )}
       </PopupContent>
     </PopupContainer>
   );

@@ -32,10 +32,24 @@ const AppContainer = styled.div`
   font-family: 'Arial', sans-serif;
 `;
 
-const ThemeToggleButton = styled.button`
+const ButtonContainer = styled.div`
   position: fixed;
   top: 10px;
   right: 10px;
+  display: flex;
+  gap: 10px;
+`;
+
+const ThemeToggleButton = styled.button`
+  padding: 10px;
+  background-color: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.color};
+  border: 1px solid ${(props) => props.theme.color};
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
+const FavoritesToggleButton = styled.button`
   padding: 10px;
   background-color: ${(props) => props.theme.background};
   color: ${(props) => props.theme.color};
@@ -55,6 +69,7 @@ function App() {
   const [favorites, setFavorites] = useState([]);
   const [filters, setFilters] = useState({ author: '', publishedDate: '', rating: '' });
   const [theme, setTheme] = useState(lightTheme);
+  const [showFavorites, setShowFavorites] = useState(false);
 
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
@@ -128,13 +143,26 @@ function App() {
     setTheme(theme === lightTheme ? darkTheme : lightTheme);
   };
 
+  const toggleFavorites = () => {
+    setShowFavorites(!showFavorites);
+  };
+
+  const isFavorite = (bookId) => {
+    return favorites.some(book => book.id === bookId);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
       <AppContainer>
-        <ThemeToggleButton onClick={toggleTheme}>
-          Alternar Tema
-        </ThemeToggleButton>
+        <ButtonContainer>
+          <ThemeToggleButton onClick={toggleTheme}>
+            Alternar Tema
+          </ThemeToggleButton>
+          <FavoritesToggleButton onClick={toggleFavorites}>
+            {showFavorites ? 'Mostrar Todos' : 'Mostrar Favoritos'}
+          </FavoritesToggleButton>
+        </ButtonContainer>
         <Header suggestions={!searchQuery ? suggestions : null} />
         <SearchBar
           searchQuery={searchQuery}
@@ -145,8 +173,12 @@ function App() {
           handleClear={handleClear}
         />
         <AdvancedFilters filters={filters} setFilters={setFilters} />
-        <BookList books={books} searched={searched} onBookClick={handleBookClick} addFavorite={addFavorite} removeFavorite={removeFavorite} favorites={favorites} />
-        {searched && (
+        {showFavorites ? (
+          <FavoritesList favorites={favorites} onBookClick={handleBookClick} removeFavorite={removeFavorite} />
+        ) : (
+          <BookList books={books} searched={searched} onBookClick={handleBookClick} addFavorite={addFavorite} removeFavorite={removeFavorite} favorites={favorites} />
+        )}
+        {searched && !showFavorites && (
           <Pagination
             page={page}
             totalItems={totalItems}
@@ -154,8 +186,14 @@ function App() {
             handleNextPage={handleNextPage}
           />
         )}
-        {selectedBook && <BookDetailsPopup book={selectedBook} onClose={handleClosePopup} />}
-        <FavoritesList favorites={favorites} onBookClick={handleBookClick} removeFavorite={removeFavorite} />
+        {selectedBook && (
+          <BookDetailsPopup
+            book={selectedBook}
+            onClose={handleClosePopup}
+            removeFavorite={removeFavorite}
+            isFavorite={isFavorite(selectedBook.id)}
+          />
+        )}
         <Footer />
       </AppContainer>
     </ThemeProvider>
