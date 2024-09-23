@@ -8,10 +8,21 @@ const HeaderWrapper = styled.header`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-export default function Header() {
-    return (
-        <HeaderWrapper>
-            <h1>Book Recommendation</h1>
-        </HeaderWrapper>
-    );
+const Suggestions = styled.div`
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #666;
+`;
+
+export default function Header({ suggestions }) {
+  return (
+    <HeaderWrapper>
+      <h1>Book Recommendation</h1>
+      {suggestions && (
+        <Suggestions>
+          <p>Temas sugeridos: {suggestions.join(', ')}</p>
+        </Suggestions>
+      )}
+    </HeaderWrapper>
+  );
 }

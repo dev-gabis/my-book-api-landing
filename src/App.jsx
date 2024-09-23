@@ -34,6 +34,20 @@ const SearchButton = styled.button`
   &:hover {
     background-color: #0056b3;
   }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
+const CategorySelect = styled.select`
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+  margin-left: 10px;
 `;
 
 const PaginationContainer = styled.div`
@@ -65,15 +79,25 @@ const PaginationButton = styled.button`
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [category, setCategory] = useState('');
   const [books, setBooks] = useState([]);
   const [searched, setSearched] = useState(false);
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
 
+  const suggestions = [
+    'O Poder do Agora',
+    'A Nova Terra',
+    'Desperte Seu Gigante Interior',
+    'Inteligência Emocional',
+    'Os Quatro Compromissos'
+  ];
+
   const handleSearch = async (newPage = 0) => {
     try {
       const startIndex = newPage * 10;
-      const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&startIndex=${startIndex}&maxResults=10`);
+      const categoryQuery = category ? `+subject:${category}` : '';
+      const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${searchQuery}${categoryQuery}&startIndex=${startIndex}&maxResults=10`);
       const data = await response.json();
       setBooks(data.items || []);
       setTotalItems(data.totalItems || 0);
@@ -95,7 +119,7 @@ function App() {
   return (
     <>
       <GlobalStyle />
-      <Header />
+      <Header suggestions={!searchQuery ? suggestions : null} />
       <SearchContainer>
         <SearchInput
           type="text"
@@ -103,6 +127,14 @@ function App() {
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Pesquisar livros"
         />
+        <CategorySelect value={category} onChange={(e) => setCategory(e.target.value)}>
+          <option value="">Todas as Categorias</option>
+          <option value="self-help">Autoajuda</option>
+          <option value="psychology">Psicologia</option>
+          <option value="philosophy">Filosofia</option>
+          <option value="spirituality">Espiritualidade</option>
+          <option value="mindfulness">Mindfulness</option>
+        </CategorySelect>
         <SearchButton onClick={() => handleSearch(0)}>Pesquisar</SearchButton>
       </SearchContainer>
       <BookList books={books} searched={searched} />
