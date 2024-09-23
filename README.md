@@ -44,8 +44,10 @@ npm run dev: Inicia o servidor de desenvolvimento.
 npm run build: Cria uma versão otimizada para produção.
 npm run serve: Serve a versão otimizada para produção.
 npm run lint: Executa o linter para verificar problemas no código.
-Estrutura do Projeto
 
+## Estrutura do Projeto
+
+```
 my-book-api-landing/
 ├── public/
 │   └── index.html
@@ -69,6 +71,9 @@ my-book-api-landing/
 ├── package.json
 ├── README.md
 └── vite.config.js
+```
+
+
 
 Contribuição
 Se você deseja contribuir com este projeto, siga os passos abaixo:
