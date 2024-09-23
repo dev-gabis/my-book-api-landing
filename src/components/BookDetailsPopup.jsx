@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { FaTimes } from 'react-icons/fa';
 
 const PopupOverlay = styled.div`
   position: fixed;
@@ -33,6 +34,8 @@ const CloseButton = styled.button`
   position: absolute;
   top: 10px;
   right: 10px;
+  display: flex;
+  align-items: center;
 
   &:hover {
     background: #fdd835;
@@ -49,7 +52,10 @@ const BookDetailsPopup = ({ book, onClose }) => {
   return (
     <PopupOverlay>
       <PopupContent>
-        <CloseButton onClick={onClose}>Fechar</CloseButton>
+        <CloseButton onClick={onClose}>
+          <FaTimes style={{ marginRight: '5px' }} />
+          Fechar
+        </CloseButton>
         <h2>{title}</h2>
         {authors && <p><strong>Autores:</strong> {authors.join(', ')}</p>}
         {description && <p><strong>Descrição:</strong> {description}</p>}

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 const BookListContainer = styled.div`
   display: flex;
@@ -34,7 +35,25 @@ const BookAuthors = styled.p`
   color: #666;
 `;
 
-const BookList = ({ books, searched, onBookClick }) => {
+const FavoriteButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff0000;
+  font-size: 1.5em;
+  margin-left: auto;
+  outline: none;
+
+  &:hover {
+    color: #cc0000;
+  }
+`;
+
+const BookList = ({ books, searched, onBookClick, addFavorite, removeFavorite, favorites }) => {
+  const isFavorite = (bookId) => {
+    return favorites.some(book => book.id === bookId);
+  };
+
   return (
     <BookListContainer>
       {searched && books.length === 0 ? (
@@ -44,6 +63,12 @@ const BookList = ({ books, searched, onBookClick }) => {
           <BookItem key={book.id} onClick={() => onBookClick(book)}>
             <BookTitle>{book.volumeInfo.title}</BookTitle>
             <BookAuthors>{book.volumeInfo.authors?.join(', ')}</BookAuthors>
+            <FavoriteButton onClick={(e) => {
+              e.stopPropagation();
+              isFavorite(book.id) ? removeFavorite(book.id) : addFavorite(book);
+            }}>
+              {isFavorite(book.id) ? <FaHeart /> : <FaRegHeart />}
+            </FavoriteButton>
           </BookItem>
         ))
       )}

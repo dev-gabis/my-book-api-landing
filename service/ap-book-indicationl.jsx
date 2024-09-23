@@ -1,90 +1,30 @@
 import axios from 'axios';
 
-const apiBaseUrl = 'http://localhost:3000';
+const apiBaseUrl = 'https://www.googleapis.com/books/v1';
 
 const apiService = {
-
-  getAccomodations: async () => {
+  // Função para buscar livros com base em uma consulta de pesquisa e categoria
+  getBooks: async (searchQuery, category, startIndex = 0, maxResults = 10) => {
     try {
-      const response = await axios.get(`${apiBaseUrl}/accomodation/getAll`);
+      const categoryQuery = category ? `+subject:${category}` : '';
+      const response = await axios.get(`${apiBaseUrl}/volumes?q=${searchQuery}${categoryQuery}&startIndex=${startIndex}&maxResults=${maxResults}`);
       return response.data;
     } catch (error) {
-      throw error;
+      console.error('Erro ao buscar livros:', error);
+      throw new Error('Não foi possível buscar os livros. Tente novamente mais tarde.');
     }
   },
 
-  getPlaces: async () => {
-    try {
-      const response = await axios.get(`${apiBaseUrl}/place/getAll`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  getTransportations: async () => {
-    try {
-      const response = await axios.get(`${apiBaseUrl}/transportation/getAll`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  getMeals: async () => {
-    try {
-      const response = await axios.get(`${apiBaseUrl}/meal/getAll`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  getEvents: async () => {
-    try {
-      const response = await axios.get(`${apiBaseUrl}/event/getAll`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  getGuides: async () => {
-    try {
-      const response = await axios.get(`${apiBaseUrl}/guide/getAll`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  getPackages: async () => {
-    try {
-      const response = await axios.get(`${apiBaseUrl}/package/getAll`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  createItinerary: async (itinerary) => {
-    try {
-      const response = await axios.post(`${apiBaseUrl}/itinerary/create`, itinerary);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  getItinerary: async (id) => {
-    try {
-      const response = await axios.get(`${apiBaseUrl}/itinerary/getById/${id}`);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+  // Função para buscar categorias (neste caso, categorias são fixas)
+  getCategories: () => {
+    return [
+      { value: 'self-help', label: 'Autoajuda' },
+      { value: 'psychology', label: 'Psicologia' },
+      { value: 'philosophy', label: 'Filosofia' },
+      { value: 'spirituality', label: 'Espiritualidade' },
+      { value: 'mindfulness', label: 'Mindfulness' }
+    ];
   }
-
 };
 
 export default apiService;
