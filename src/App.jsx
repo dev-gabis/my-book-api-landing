@@ -1,24 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import styled, { ThemeProvider } from 'styled-components';
+import styled from 'styled-components';
 import Header from './components/Header';
 import SearchBar from './components/SearchBar';
 import BookList from './components/BookList';
 import Pagination from './components/Pagination';
 import FavoritesList from './components/FavoritesList';
 import AdvancedFilters from './components/AdvancedFilters';
-import ThemeToggle from './components/ThemeToggle';
 import Footer from './components/Footer';
 import BookDetailsPopup from './components/BookDetailsPopup';
 
-const lightTheme = {
-  background: '#ffffff',
-  color: '#000000',
-};
-
-const darkTheme = {
-  background: '#333333',
-  color: '#ffffff',
-};
+const AppContainer = styled.div`
+  font-family: 'Arial', sans-serif;
+`;
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,7 +23,6 @@ function App() {
   const [selectedBook, setSelectedBook] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [filters, setFilters] = useState({ author: '', publishedDate: '', rating: '' });
-  const [theme, setTheme] = useState(lightTheme);
 
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
@@ -40,10 +32,6 @@ function App() {
   useEffect(() => {
     localStorage.setItem('favorites', JSON.stringify(favorites));
   }, [favorites]);
-
-  useEffect(() => {
-    document.body.style.fontFamily = "'Arial', sans-serif";
-  }, []);
 
   const suggestions = [
     'O Poder do Agora',
@@ -104,14 +92,9 @@ function App() {
     setFavorites(favorites.filter(book => book.id !== bookId));
   };
 
-  const toggleTheme = () => {
-    setTheme(theme === lightTheme ? darkTheme : lightTheme);
-  };
-
   return (
-    <ThemeProvider theme={theme}>
+    <AppContainer>
       <Header suggestions={!searchQuery ? suggestions : null} />
-      <ThemeToggle toggleTheme={toggleTheme} />
       <SearchBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -133,7 +116,7 @@ function App() {
       {selectedBook && <BookDetailsPopup book={selectedBook} onClose={handleClosePopup} />}
       <FavoritesList favorites={favorites} onBookClick={handleBookClick} removeFavorite={removeFavorite} />
       <Footer />
-    </ThemeProvider>
+    </AppContainer>
   );
 }
 
