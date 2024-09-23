@@ -1,16 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const FooterWrapper = styled.footer`
-  background-color: #f1f1f1;
-  padding: 10px;
+const FooterContainer = styled.footer`
+  background-color: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.color};
+  padding: 20px;
   text-align: center;
+  border-top: 1px solid ${(props) => props.theme.color};
 `;
 
-export default function Footer() {
-    return (
-        <FooterWrapper>
-            <p>&copy; 2024 Book API Project</p>
-        </FooterWrapper>
-    );
-}
+const Footer = () => {
+  return (
+    <FooterContainer>
+      <p>&copy; 2023 My Book App. Todos os direitos reservados.</p>
+    </FooterContainer>
+  );
+};
+
+export default Footer;

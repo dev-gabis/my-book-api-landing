@@ -14,7 +14,8 @@ const PopupContainer = styled.div`
 `;
 
 const PopupContent = styled.div`
-  background: white;
+  background: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.color};
   padding: 20px;
   border-radius: 5px;
   width: 80%;
@@ -30,6 +31,7 @@ const CloseButton = styled.button`
   top: 10px;
   right: 10px;
   cursor: pointer;
+  color: ${(props) => props.theme.color};
 `;
 
 const RatingSelect = styled.select`
@@ -39,6 +41,8 @@ const RatingSelect = styled.select`
   border: 1px solid #ddd;
   border-radius: 5px;
   outline: none;
+  background: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.color};
 `;
 
 const BookDetailsPopup = ({ book, onClose }) => {

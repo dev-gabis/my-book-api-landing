@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { ThemeProvider, createGlobalStyle } from 'styled-components';
 import Header from './components/Header';
 import SearchBar from './components/SearchBar';
 import BookList from './components/BookList';
@@ -9,8 +9,39 @@ import AdvancedFilters from './components/AdvancedFilters';
 import Footer from './components/Footer';
 import BookDetailsPopup from './components/BookDetailsPopup';
 
+const lightTheme = {
+  background: '#ffffff',
+  color: '#000000',
+};
+
+const darkTheme = {
+  background: '#333333',
+  color: '#ffffff',
+};
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${(props) => props.theme.background};
+    color: ${(props) => props.theme.color};
+    font-family: 'Arial', sans-serif;
+    transition: all 0.3s ease;
+  }
+`;
+
 const AppContainer = styled.div`
   font-family: 'Arial', sans-serif;
+`;
+
+const ThemeToggleButton = styled.button`
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 10px;
+  background-color: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.color};
+  border: 1px solid ${(props) => props.theme.color};
+  border-radius: 5px;
+  cursor: pointer;
 `;
 
 function App() {
@@ -23,6 +54,7 @@ function App() {
   const [selectedBook, setSelectedBook] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [filters, setFilters] = useState({ author: '', publishedDate: '', rating: '' });
+  const [theme, setTheme] = useState(lightTheme);
 
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
@@ -92,31 +124,41 @@ function App() {
     setFavorites(favorites.filter(book => book.id !== bookId));
   };
 
+  const toggleTheme = () => {
+    setTheme(theme === lightTheme ? darkTheme : lightTheme);
+  };
+
   return (
-    <AppContainer>
-      <Header suggestions={!searchQuery ? suggestions : null} />
-      <SearchBar
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        category={category}
-        setCategory={setCategory}
-        handleSearch={handleSearch}
-        handleClear={handleClear}
-      />
-      <AdvancedFilters filters={filters} setFilters={setFilters} />
-      <BookList books={books} searched={searched} onBookClick={handleBookClick} addFavorite={addFavorite} removeFavorite={removeFavorite} favorites={favorites} />
-      {searched && (
-        <Pagination
-          page={page}
-          totalItems={totalItems}
-          handlePreviousPage={handlePreviousPage}
-          handleNextPage={handleNextPage}
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <AppContainer>
+        <ThemeToggleButton onClick={toggleTheme}>
+          Alternar Tema
+        </ThemeToggleButton>
+        <Header suggestions={!searchQuery ? suggestions : null} />
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          category={category}
+          setCategory={setCategory}
+          handleSearch={handleSearch}
+          handleClear={handleClear}
         />
-      )}
-      {selectedBook && <BookDetailsPopup book={selectedBook} onClose={handleClosePopup} />}
-      <FavoritesList favorites={favorites} onBookClick={handleBookClick} removeFavorite={removeFavorite} />
-      <Footer />
-    </AppContainer>
+        <AdvancedFilters filters={filters} setFilters={setFilters} />
+        <BookList books={books} searched={searched} onBookClick={handleBookClick} addFavorite={addFavorite} removeFavorite={removeFavorite} favorites={favorites} />
+        {searched && (
+          <Pagination
+            page={page}
+            totalItems={totalItems}
+            handlePreviousPage={handlePreviousPage}
+            handleNextPage={handleNextPage}
+          />
+        )}
+        {selectedBook && <BookDetailsPopup book={selectedBook} onClose={handleClosePopup} />}
+        <FavoritesList favorites={favorites} onBookClick={handleBookClick} removeFavorite={removeFavorite} />
+        <Footer />
+      </AppContainer>
+    </ThemeProvider>
   );
 }
 
