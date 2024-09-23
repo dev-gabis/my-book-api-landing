@@ -31,7 +31,7 @@ Antes de começar, certifique-se de ter o Node.js instalado em sua máquina. Voc
 
     npm install
 
-     npm run dev
+    npm run dev
 
 
 O projeto estará disponível em http://localhost:3000.
