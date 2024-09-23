@@ -29,10 +29,8 @@ Antes de começar, certifique-se de ter o Node.js instalado em sua máquina. Voc
    git clone https://github.com/seu-usuario/my-book-api-landing.git
    cd my-book-api-landing
 
-   ```bash
     npm install
 
-   ```bash
      npm run dev
 
 
