@@ -8,6 +8,7 @@ import FavoritesList from './components/FavoritesList';
 import AdvancedFilters from './components/AdvancedFilters';
 import Footer from './components/Footer';
 import BookDetailsPopup from './components/BookDetailsPopup';
+import ReadingHistory from './components/ReadingHistory';
 
 const lightTheme = {
   background: '#ffffff',
@@ -58,6 +59,15 @@ const FavoritesToggleButton = styled.button`
   cursor: pointer;
 `;
 
+const HistoryToggleButton = styled.button`
+  padding: 10px;
+  background-color: ${(props) => props.theme.background};
+  color: ${(props) => props.theme.color};
+  border: 1px solid ${(props) => props.theme.color};
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('');
@@ -70,15 +80,24 @@ function App() {
   const [filters, setFilters] = useState({ author: '', publishedDate: '', rating: '' });
   const [theme, setTheme] = useState(lightTheme);
   const [showFavorites, setShowFavorites] = useState(false);
+  const [readingHistory, setReadingHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
     setFavorites(storedFavorites);
+
+    const storedHistory = JSON.parse(localStorage.getItem('readingHistory')) || [];
+    setReadingHistory(storedHistory);
   }, []);
 
   useEffect(() => {
     localStorage.setItem('favorites', JSON.stringify(favorites));
   }, [favorites]);
+
+  useEffect(() => {
+    localStorage.setItem('readingHistory', JSON.stringify(readingHistory));
+  }, [readingHistory]);
 
   const suggestions = [
     'O Poder do Agora',
@@ -115,6 +134,7 @@ function App() {
 
   const handleBookClick = (book) => {
     setSelectedBook(book);
+    addToReadingHistory(book);
   };
 
   const handleClosePopup = () => {
@@ -147,8 +167,18 @@ function App() {
     setShowFavorites(!showFavorites);
   };
 
+  const toggleHistory = () => {
+    setShowHistory(!showHistory);
+  };
+
   const isFavorite = (bookId) => {
     return favorites.some(book => book.id === bookId);
+  };
+
+  const addToReadingHistory = (book) => {
+    if (!readingHistory.some(item => item.id === book.id)) {
+      setReadingHistory([...readingHistory, book]);
+    }
   };
 
   return (
@@ -162,6 +192,9 @@ function App() {
           <FavoritesToggleButton onClick={toggleFavorites}>
             {showFavorites ? 'Mostrar Todos' : 'Mostrar Favoritos'}
           </FavoritesToggleButton>
+          <HistoryToggleButton onClick={toggleHistory}>
+            {showHistory ? 'Ocultar Histórico' : 'Mostrar Histórico'}
+          </HistoryToggleButton>
         </ButtonContainer>
         <Header suggestions={!searchQuery ? suggestions : null} />
         <SearchBar
@@ -175,10 +208,12 @@ function App() {
         <AdvancedFilters filters={filters} setFilters={setFilters} />
         {showFavorites ? (
           <FavoritesList favorites={favorites} onBookClick={handleBookClick} removeFavorite={removeFavorite} />
+        ) : showHistory ? (
+          <ReadingHistory readingHistory={readingHistory} onBookClick={handleBookClick} />
         ) : (
           <BookList books={books} searched={searched} onBookClick={handleBookClick} addFavorite={addFavorite} removeFavorite={removeFavorite} favorites={favorites} />
         )}
-        {searched && !showFavorites && (
+        {searched && !showFavorites && !showHistory && (
           <Pagination
             page={page}
             totalItems={totalItems}
